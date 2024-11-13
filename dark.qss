@@ -1,0 +1,51 @@
+/* Background color for main window and widgets */
+QWidget {
+    background-color: #2c2c2c;
+    color: white;
+}
+
+/* Color for text in text edit widgets */
+QTextEdit {
+    background-color: #2c2c2c;
+    color: white;
+}
+
+/* Color for buttons */
+QPushButton {
+    background-color: #353535;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 5px;
+}
+
+/* Color for buttons when hovered */
+QPushButton:hover {
+    background-color: #444;
+}
+
+/* Color for highlighted text in widgets */
+QWidget:selected {
+    background-color: #8e2d9d;
+    color: black;
+}
+
+/* Color for tooltips */
+QToolTip {
+    background-color: #2c2c2c;
+    color: white;
+    border: 1px solid #444;
+}
+
+/* Color for sliders */
+QSlider::groove:horizontal {
+    border: 1px solid #444;
+    background: #2c2c2c;
+    height: 16px;
+}
+
+QSlider::handle:horizontal {
+    background: #8e2d9d;
+    border: 1px solid #444;
+    width: 32px;
+    height: 32px;
+}
