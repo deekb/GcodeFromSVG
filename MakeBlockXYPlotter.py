@@ -10,7 +10,7 @@ from svg_to_gcode.geometry import LineSegmentChain
 from svg_to_gcode.geometry import Vector
 
 
-class MakeBlockXYPlotterCompiler(Compiler):
+class MakeBlockXYLaserPlotterCompiler(Compiler):
     """
     The Compiler class handles the process of drawing geometric objects using interface commands and assembling
     the resulting numerical control code.
@@ -67,7 +67,7 @@ class MakeBlockXYPlotterCompiler(Compiler):
         self.body.clear()
 
 
-class MakeBlockXYPlotterInterface(Interface):
+class MakeBlockXYLaserPlotterInterface(Interface):
 
     def __init__(self):
         self.position = None
@@ -89,11 +89,18 @@ class MakeBlockXYPlotterInterface(Interface):
         return self.linear_move(x, y, command="G0")
 
     def linear_move(self, x=None, y=None, z=None, command="G1"):
+
+        if self._next_speed is None:
+            raise ValueError("Undefined movement speed. Call set_movement_speed before executing movement commands.")
+
         # Don't do anything if the linear move command was called without passing a value.
         if x is None and y is None and z is None:
             warnings.warn("linear_move command invoked without arguments.")
             return ""
 
+        if self._current_speed != self._next_speed:
+            self._current_speed = self._next_speed
+            command += f" F{self._current_speed}"
 
         # Move if not 0 and not None
         command += f" X{x:.{self.precision}f}" if x is not None else ""
@@ -142,6 +149,121 @@ class MakeBlockXYPlotterInterface(Interface):
             return "G20"
 
         return ""
+
+    def home_axes(self):
+        return "G28"
+
+
+class MakeBlockXYPenPlotterCompiler(Compiler):
+    """
+    The Compiler class handles the process of drawing geometric objects using interface commands and assembling
+    the resulting numerical control code.
+    """
+
+    def __init__(self, interface_class: typing.Type[Interface], movement_speed, cutting_speed, pass_depth,
+                 dwell_time=0, unit=None, custom_header=None, custom_footer=None):
+        """
+
+        :param interface_class: Specify which interface to use. The most common is the gcode interface.
+        :param movement_speed: the speed at which to move the tool when moving. units are determined by the printer.
+        :param cutting_speed: the speed at which to move the tool when cutting. units are determined by the printer.
+        :param pass_depth: AKA, the depth your laser cuts in a pass.
+        :param dwell_time: the number of ms the tool should wait before moving to another cut. Useful for pen plotters.
+        :param unit: specify a unit to the machine
+        :param custom_header: A list of commands to be executed before all generated commands. Default is [laser_off]
+        :param custom_footer: A list of commands to be executed after all generated commands. Default is [laser_off]
+        """
+        super().__init__(interface_class, movement_speed, cutting_speed, pass_depth, dwell_time, unit, custom_header,
+                         custom_footer)
+
+    def append_line_chain(self, line_chain: LineSegmentChain):
+        """
+        Draws a LineSegmentChain by calling interface.linear_move() for each segment. The resulting code is appended to "self.body"
+        """
+
+        if line_chain.chain_size() == 0:
+            warnings.warn("Attempted to parse empty LineChain")
+            return []
+
+        code = []
+
+        start = line_chain.get(0).start
+
+        # Don't dwell and turn off the laser if the new start is at the current position
+        if self.interface.position is None or abs(self.interface.position - start) > TOLERANCES["operation"]:
+
+            code = [self.interface.pen_up(),
+                    self.interface.non_cutting_move(start.x, start.y),
+                    self.interface.pen_down(),
+                    self.interface.set_movement_speed(self.cutting_speed),]
+
+            if self.dwell_time > 0:
+                code = [self.interface.dwell(self.dwell_time)] + code
+
+        for line in line_chain:
+            code.append(self.interface.cutting_move(line.end.x, line.end.y))
+
+        self.body.extend(code)
+
+    def clear_curves(self):
+        self.body.clear()
+
+
+
+class MakeBlockXYPenPlotterInterface(Interface):
+
+    def __init__(self):
+        self.position = None
+        self._next_speed = None
+        self._current_speed = None
+
+        # Round outputs to the same number of significant figures as the operational tolerance.
+        self.precision = abs(round(math.log(TOLERANCES["operation"], 10)))
+
+    def set_movement_speed(self, speed):
+        self._next_speed = speed
+        # return "M5 A%d B%d H%d W%d S%d\n" % (0, 0, 200, 200, speed)
+        return ""
+
+    def cutting_move(self, x, y):
+        return self.linear_move(x, y, command="G1")
+
+    def non_cutting_move(self, x, y):
+        return self.linear_move(x, y, command="G0")
+
+    def linear_move(self, x=None, y=None, z=None, command="G0"):
+        # Don't do anything if the linear move command was called without passing a value.
+        if x is None and y is None and z is None:
+            warnings.warn("linear_move command invoked without arguments.")
+            return ""
+
+        if self._current_speed != self._next_speed:
+            self._current_speed = self._next_speed
+            command += f" F{self._current_speed}"
+
+        # Move if not 0 and not None
+        command += f" X{x:.{self.precision}f}" if x is not None else ""
+        command += f" Y{y:.{self.precision}f}" if y is not None else ""
+
+        if self.position is not None or (x is not None and y is not None):
+            if x is None:
+                x = self.position.x
+
+            if y is None:
+                y = self.position.y
+
+            self.position = Vector(x, y)
+
+        return command
+
+    def pen_up(self):
+        return "M5"
+
+    def pen_down(self):
+        return "M3"
+
+    def dwell(self, milliseconds):
+        return f"G4 P{milliseconds}"
 
     def home_axes(self):
         return "G28"

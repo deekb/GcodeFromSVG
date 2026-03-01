@@ -8,7 +8,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 from ui import Ui_MainWindow  # Import the generated UI code
 
-FINISHED_RESPONSE = "OK"
+FINISHED_RESPONSE = "ok\r\n"
 
 
 class SerialCommunicator:
@@ -23,13 +23,12 @@ class SerialCommunicator:
         self.serial_port.write(command.encode())
 
     def read(self):
-        return self.serial_port.readline().decode().strip()
+        return self.serial_port.readline().decode()
 
     def wait_for_ok(self):
         response = ""
         while True:
             response += self.read()
-            print(response)
             if FINISHED_RESPONSE in response:
                 return response
 
@@ -89,7 +88,6 @@ class SerialApp(QMainWindow):
 
     def connect(self):
         if self.serial_communicator and self.serial_communicator.serial_port.is_open:
-            self.send_stop_command()
             self.serial_communicator.close()
             self.ui.connectButton.setText("Connect")
             self.ui.responseText.append("Disconnected from port\n")
@@ -136,8 +134,9 @@ class SerialApp(QMainWindow):
 
     def laser_on(self):
         if self.serial_communicator and self.serial_communicator.serial_port.is_open:
-            power = self.ui.laserPowerSlider.value()
-            self.serial_communicator.send(f"M4 {power}\n")
+            power = self.ui.laserPowerSlider.value() * (1000 / 255)
+            # self.serial_communicator.send(f"M4 {power}\n")
+            self.serial_communicator.send(f"M4 S{int(power)}\n")
             self.ui.responseText.append(f"Sent: M4 {power} (Laser On)\n")
             response = self.serial_communicator.wait_for_ok()
             self.ui.responseText.append(f"Received: {response}\n")
@@ -146,7 +145,7 @@ class SerialApp(QMainWindow):
 
     def laser_off(self):
         if self.serial_communicator and self.serial_communicator.serial_port.is_open:
-            self.serial_communicator.send("M4")
+            self.serial_communicator.send("M4 S0")
             self.ui.responseText.append("Sent: M4 (Laser Off)\n")
             response = self.serial_communicator.wait_for_ok()
             self.ui.responseText.append(f"Received: {response}\n")

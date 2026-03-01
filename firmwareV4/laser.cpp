@@ -13,6 +13,15 @@ Laser::Laser(int laserPort) : laser(laserPort), currentPower(0) {
 }
 
 /**
+ * @brief Turns on the laser at full power.
+ *
+ * Calls `setPower()` with the last used value to resume the laser power.
+ */
+void Laser::turnOn() {
+    setPower(currentPower);
+}
+
+/**
  * @brief Turns off the laser.
  *
  * Calls `setPower()` with a value of 0 to turn the laser off.

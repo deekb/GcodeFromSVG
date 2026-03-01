@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="279.39999mm"
+   height="215.89999mm"
+   viewBox="0 0 279.39999 215.89999"
+   version="1.1"
+   id="svg3854"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="FINAL_GINGER_BEER_OUTLINE_LOWER.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview3856"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.89816375"
+     inkscape:cx="493.22855"
+     inkscape:cy="580.0724"
+     inkscape:window-width="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs3851" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect4803"
+       style="vector-effect:non-scaling-stroke;stroke-width:1.48316;stroke-linecap:round;stroke-linejoin:bevel;-inkscape-stroke:hairline"
+       d="m 43.113041,62.999996 h 84.073919 c 2.74953,0 4.96304,2.23 4.96304,5 V 209 c 0,2.77 -2.21351,5 -4.96304,5 H 43.113041 C 40.363516,214 38.15,211.77 38.15,209 V 67.999996 c 0,-2.77 2.213516,-5 4.963041,-5 z" />
+    <path
+       id="rect4803-7"
+       style="vector-effect:non-scaling-stroke;stroke-width:1.48316;stroke-linecap:round;stroke-linejoin:bevel;-inkscape-stroke:hairline"
+       d="m 161.49826,63.529167 h 80.10349 c 3.84933,0 6.94825,2.23 6.94825,5 V 209.52917 c 0,2.77 -3.09892,5 -6.94825,5 h -80.10349 c -3.84933,0 -6.94826,-2.23 -6.94826,-5 V 68.529167 c 0,-2.77 3.09893,-5 6.94826,-5 z" />
+  </g>
+</svg>
