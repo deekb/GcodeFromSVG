@@ -83,15 +83,20 @@ if __name__ == "__main__":
 
     # --- Example: adjust acceleration ---
     print("\nSetting new acceleration to 1000 mm/sec^2")
-    set_setting("$120", 2000)
-    set_setting("$121", 2000)
+    set_setting("$120", 1900)
+    set_setting("$121", 1900)
     set_setting("$122", 500)
 
     # --- Example: adjust max speeds ---
     print("\nSetting new maximum feedrates (1000 mm/min X/Y, 600 mm/min Z)")
-    set_setting("$110", 1000)  # X-axis max feedrate
-    set_setting("$111", 1000)  # Y-axis max feedrate
+    set_setting("$110", 1300)  # X-axis max feedrate
+    set_setting("$111", 1300)  # Y-axis max feedrate
     set_setting("$112", 600)   # Z-axis max feedrate
+
+    # DEFAULTS
+    # set_setting("$110", 1000)  # X-axis max feedrate
+    # set_setting("$111", 1000)  # Y-axis max feedrate
+    # set_setting("$112", 600)  # Z-axis max feedrate
 
     # Verify changes
     print("\nUpdated GRBL settings:")
